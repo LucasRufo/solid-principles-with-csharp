@@ -111,8 +111,13 @@ Right now we have three different classes, and every class has its own responsib
 ## Resources
 
 https://www.lambda3.com.br/2022/06/principios-solid-boas-praticas-de-programacao-com-c-parte-1-srp-single-responsability-principle/
+
 https://www.zup.com.br/blog/design-principle-solid
+
 https://blog.cleancoder.com/uncle-bob/2020/10/18/Solid-Relevance.html
+
 https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english/
+
 https://www.digitalocean.com/community/conceptual-articles/s-o-l-i-d-the-first-five-principles-of-object-oriented-design
+
 https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898
