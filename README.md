@@ -183,6 +183,83 @@ public class CashPayment : IPayment
 
 Now if a new payment type is needed, we only have to create a new class specifying the new type and extend the `IPayment` interface, we don't change any of our other implementations and now our classes have only one resposibility, respecting the first two principles. 
 
+## Liskov Substitution Principle 
+
+> "A program that uses an interface must not be confused by an implementation of that interface." 
+
+> "If S is a subtype of T, then objects of type T in a program may be replaced with objects of type S without altering any of the desirable properties of that program."
+
+To exemplify this principle, we have this code: 
+
+```csharp
+public class DocxFile
+{
+    public virtual void Update()
+    {
+        Console.WriteLine("Updating DOCX file...");
+    }
+
+    public virtual void Download()
+    {
+        Console.WriteLine("Downloading DOCX file...");
+    }
+}
+```
+
+```csharp
+public class PdfFile : DocxFile
+{
+    public override void Update()
+    {
+        throw new InvalidOperationException();
+    }
+
+    public override void Download()
+    {
+        Console.WriteLine("Downloading PDF file...");
+    }
+}
+```
+
+As we can see, the class `PdfFile` can't be a substitute for the class `DocxFile` because it's not possible to update a PDF file, so if we call the `Update` method using the class `PdfFile` we would get an error. To fix this, we can refactor de code to this:
+
+```csharp
+public class File
+{
+    public virtual void Download()
+    {
+        Console.WriteLine("Downloading generic file...");
+    }
+}
+```
+
+```csharp
+public class DocxFile : File
+{
+    public void Update()
+    {
+        Console.WriteLine("Updating DOCX file...");
+    }
+
+    public override void Download()
+    {
+        Console.WriteLine("Downloading DOCX file...");
+    }
+}
+```
+
+```csharp
+public class PdfFile : File
+{
+    public override void Download()
+    {
+        Console.WriteLine("Downloading PDF file...");
+    }
+}
+```
+
+Now the `PdfFile` class can act as a `File` base class without problems. We are enforcing consistency so that our parent class and our child class can be used in the same way without errors.
+
 ## Resources
 
 https://www.lambda3.com.br/2022/06/principios-solid-boas-praticas-de-programacao-com-c-parte-1-srp-single-responsability-principle/
@@ -198,3 +275,5 @@ https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english/
 https://www.digitalocean.com/community/conceptual-articles/s-o-l-i-d-the-first-five-principles-of-object-oriented-design
 
 https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898
+
+https://methodpoet.com/liskov-substitution-principle/

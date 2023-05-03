@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="02 - OpenClosedPrinciple\" />
-    <Folder Include="03 - LiskovSubstitutionPrinciple\" />
     <Folder Include="04 - InterfaceSegregationPrinciple\" />
     <Folder Include="05 - DependencyInversionPrinciple\" />
   </ItemGroup>
