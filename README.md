@@ -2,7 +2,7 @@
 
 This purpose of this content is to have a place to revisitate this concepts once in a while, but feel free to use it as a resource or send suggestions for improvements.
 
-The SOLID principles were created as guidelines to write software that is easier to maintain. Adopting the SOLID principles can help developers to avoid code smells and refactoring code. The principles were reunited by Robect C. Martin, but the acronym was nominated by Michael Feathers.
+The SOLID principles were created as guidelines to write software that is easier to maintain. Adopting the SOLID principles can help developers avoid code smells and refactoring code. The principles were reunited by Robect C. Martin, but the acronym was nominated by Michael Feathers.
 
 All the code used in the examples are in a .NET project in this repo. 
 
@@ -374,11 +374,127 @@ public class CityRepository : IReadRepository
 
 Now our `CityRepository` only has the `List` method, and our code is respecting the principle.
 
+## Dependency Inversion Principle
+
+> "Depend in the direction of abstraction. High level modules should not depend upon low level details."
+
+This principle says that we should depend on abstractions instead of implementations. Take this code as an example: 
+
+```csharp
+public class TransactionService
+{
+    public void ProcessTransaction(Guid userId, decimal value)
+    {
+        var validator = new TransactionValidator();
+        var repository = new TransactionRepository();
+
+        var isValid = validator.Validate(value);
+
+        if (!isValid)
+            return;
+
+        repository.Save(userId, value);
+    }
+}
+```
+
+```csharp
+public class TransactionValidator
+{
+    public bool Validate(decimal value)
+    {
+        if (value <= 0)
+            return false;
+
+        return true;
+    }
+}
+```
+
+```csharp
+public class TransactionRepository
+{
+    public void Save(Guid userId, decimal value)
+    {
+        Console.WriteLine($"Saving transaction from user {userId} with value {value}");
+    }
+}
+```
+
+Our class `TransactionService` uses the implementation of two classes, a repository and a validator. If at some point we make changes in those dependencies, our `TransactionService` would need a change too, so we are violating the Dependency Inversion Principle.
+
+To respect the principle, we can use dependency injection and interfaces to abstract the behavior that our service class needs: 
+
+```csharp
+public class TransactionService
+{
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly ITransactionValidator _transactionValidator;
+
+    public TransactionService(ITransactionValidator validator, ITransactionRepository repository)
+    {
+        _transactionValidator = validator;
+        _transactionRepository = repository;
+    }
+
+    public void ProcessTransaction(Guid userId, decimal value)
+    {
+        var isValid = _transactionValidator.Validate(value);
+
+        if (!isValid)
+            return;
+
+        _transactionRepository.Save(userId, value);
+    }
+}
+```
+
+```csharp
+public class TransactionValidator : ITransactionValidator
+{
+    public bool Validate(decimal value)
+    {
+        if (value <= 0)
+            return false;
+
+        return true;
+    }
+}
+
+public interface ITransactionValidator
+{
+    bool Validate(decimal value);
+}
+```
+
+```csharp
+public class TransactionRepository : ITransactionRepository
+{
+    public void Save(Guid userId, decimal value)
+    {
+        Console.WriteLine($"Saving transaction from user {userId} with value {value}");
+    }
+}
+
+public interface ITransactionRepository
+{
+    void Save(Guid userId, decimal value);
+}
+```
+
+Now our `TransactionService` only depends on interfaces and it only knows the contract of those dependencies.
+
 ## Resources
 
 https://www.lambda3.com.br/2022/06/principios-solid-boas-praticas-de-programacao-com-c-parte-1-srp-single-responsability-principle/
 
 https://www.lambda3.com.br/2022/07/principios-solid-boas-praticas-de-programacao-com-c-parte-2-ocp-open-closed-principle/
+
+https://www.lambda3.com.br/2022/07/principios-solid-boas-praticas-de-programacao-com-c-parte-3-lsp-liskovs-substitution-principle/
+
+https://www.lambda3.com.br/2022/07/principios-solid-boas-praticas-de-programacao-com-c-parte-4-isp-interface-segregation-principle/
+
+https://www.lambda3.com.br/2022/07/principios-solid-boas-praticas-de-programacao-com-c-parte-5-dip-dependency-inversion-principle/
 
 https://www.zup.com.br/blog/design-principle-solid
 
