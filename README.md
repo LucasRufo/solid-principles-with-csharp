@@ -260,6 +260,120 @@ public class PdfFile : File
 
 Now the `PdfFile` class can act as a `File` base class without problems. We are enforcing consistency so that our parent class and our child class can be used in the same way without errors.
 
+## Interface Segregation Principle
+
+> "Keep interfaces small so that users don’t end up depending on things they don’t need."
+
+This one is very straight forward, looking at this code you should already see the principle violation:
+
+```csharp
+public interface IRepository
+{
+    public string Save(string name);
+    public List<string> List();
+    public string Update(string oldName, string newName);
+}
+```
+
+```csharp
+public class UserRepository : IRepository
+{
+    private List<string> _userList = new();
+    public List<string> List()
+    {
+        return _userList;
+    }
+
+    public string Save(string name)
+    {
+        _userList.Add(name);
+        return $"User {name} saved!";
+    }
+
+    public string Update(string oldName, string newName)
+    {
+        _userList.Remove(oldName);
+        _userList.Add(newName);
+        return $"User with old name {oldName} updated to {newName}!";
+    }
+}
+```
+
+```csharp
+public class CityRepository : IRepository
+{
+    public List<string> List()
+    {
+        return new List<string>() { "São Paulo", "Rio de Janeiro", "Fortaleza" };
+    }
+
+    public string Save(string name)
+    {
+        throw new NotImplementedException("We don't have this operation for cities");
+    }
+
+    public string Update(string oldName, string newName)
+    {
+        throw new NotImplementedException("We don't have this operation for cities");
+    }
+}
+```
+
+The class `CityRepository` doesn't have Save and Update operations, it has a fixed list of cities that don't change. So our contract with the `IRepository` interface is violating the principle, because the `CityRepository` doesn't need those two extra methods, and this can lead to unexpected bugs.
+
+We can break our interface in two different interfaces:
+
+```csharp
+public interface IReadRepository
+{
+    public List<string> List();
+}
+
+public interface IWriteRepository
+{
+    public string Save(string name);
+    public string Update(string oldName, string newName);
+}
+```
+
+So our code can implement only the interfaces that are really needed: 
+
+```csharp
+public class UserRepository : IReadRepository, IWriteRepository
+{
+    private List<string> _userList = new();
+    public List<string> List()
+    {
+        return _userList;
+    }
+
+    public string Save(string name)
+    {
+        _userList.Add(name);
+        return $"User {name} saved!";
+    }
+
+    public string Update(string oldName, string newName)
+    {
+        _userList.Remove(oldName);
+        _userList.Add(newName);
+        return $"User with old name {oldName} updated to {newName}!";
+    }
+}
+```
+
+```csharp
+public class CityRepository : IReadRepository
+{
+    public List<string> List()
+    {
+        return new List<string>() { "São Paulo", "Rio de Janeiro", "Fortaleza" };
+    }
+}
+```
+
+Now our `CityRepository` only has the `List` method, and our code is respecting the principle.
+
 ## Resources
 
 https://www.lambda3.com.br/2022/06/principios-solid-boas-praticas-de-programacao-com-c-parte-1-srp-single-responsability-principle/
@@ -277,3 +391,5 @@ https://www.digitalocean.com/community/conceptual-articles/s-o-l-i-d-the-first-f
 https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898
 
 https://methodpoet.com/liskov-substitution-principle/
+
+https://medium.com/netcoders/aplicando-solid-com-c-isp-interface-segregation-principle-e6683f1d6975
