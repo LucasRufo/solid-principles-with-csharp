@@ -1,10 +1,10 @@
 # Solid Principles With C#
 
-This purpose of this content is to have a place to revisitate this concepts once in a while, but feel free to use it as a resource or send suggestions for improvements.
+The purpose of this content is to have a place to revisit these concepts occasionally but feel free to use it as a resource or send suggestions for improvements.
 
-The SOLID principles were created as guidelines to write software that is easier to maintain. Adopting the SOLID principles can help developers avoid code smells and refactoring code. The principles were reunited by Robect C. Martin, but the acronym was nominated by Michael Feathers.
+The SOLID principles were created as guidelines for writing easier to maintain software. Adopting the SOLID principles can help developers avoid code smells and refactoring code. The principles were reunited by Robert C. Martin, but the acronym was nominated by Michael Feathers.
 
-All the code used in the examples are in a .NET project in this repo. 
+All the code used in the examples is in a .NET project in this repo.
 
 Almost all the principle's definitions are from an [article](https://blog.cleancoder.com/uncle-bob/2020/10/18/Solid-Relevance.html) from Robect C. Martin.
 
@@ -57,11 +57,11 @@ public class Transaction
 
 The `Transaction` class has three functions: 
 
-- The first one calculate the value from a field called `ValueWithTax`.
-- The second one save the transaction to a file.
+- The first one calculates the value from a field called `ValueWithTax`.
+- The second one saves the transaction to a file.
 - The third one log all the data to the console.
 
-Basically, our `Transaction` class has three different responsibilities, therefore it has three reasons to change. If at some point we want to change our code to save the transaction in a real database, we would change the `Transaction` class and we would have a chance to introduce bugs into code that was already working for the other two responsibilities. 
+Our `Transaction` class has three different responsibilities, therefore it has three reasons to change. If, at some point, we want to change our code to save the transaction in an actual database, we would change the `Transaction` class and have a chance to introduce bugs into code that was already working for the other two responsibilities.
 
 If we refactor this code into a version that respects the Single Responsibility Principle, it should look like this:
 
@@ -110,7 +110,7 @@ public class TransactionLogger
 }
 ```
 
-Right now we have three different classes, and every class has its own responsibility, so if we want to change the way that we save our data to save to a different source like a database, we only modify the `TransactionRepository` class.
+Now we have three different classes, and every class has its responsibility, so if we want to change the way that we save our data to save to an other source like a database, we only modify the `TransactionRepository` class.
 
 ## Open Closed Principle
 
@@ -140,7 +140,7 @@ public class Payment
 }
 ```
 
-If at some point our financial department say that we need to accept a new payment type, we would modify the `Process` method and add one more condition. So our class is open to modifications in this state, and violates the first SOLID principle, because our `Process` method has more than one responsibility. 
+If, at some point, our financial department says that we need to accept a new payment type, we would have to modify the Process method and add one more condition. So our class is open to modifications in this state and violates the first SOLID principle because our `Process` method has more than one responsibility.
 
 We can refactor this code to something like this: 
 
@@ -181,7 +181,7 @@ public class CashPayment : IPayment
 }
 ```
 
-Now if a new payment type is needed, we only have to create a new class specifying the new type and extend the `IPayment` interface, we don't change any of our other implementations and now our classes have only one resposibility, respecting the first two principles. 
+Now if a new payment type is needed, we only have to create a new class specifying the new type and extend the `IPayment` interface, we don't change any of our other implementations, and now our classes have only one responsibility, respecting the first two principles.
 
 ## Liskov Substitution Principle 
 
@@ -221,7 +221,7 @@ public class PdfFile : DocxFile
 }
 ```
 
-As we can see, the class `PdfFile` can't be a substitute for the class `DocxFile` because it's not possible to update a PDF file, so if we call the `Update` method using the class `PdfFile` we would get an error. To fix this, we can refactor de code to this:
+As we can see, the class `PdfFile` can't be a substitute for the class `DocxFile` because it's impossible to update a PDF file, so if we call the `Update` method using the class `PdfFile` we would get an error. To fix this, we can refactor the code to this:
 
 ```csharp
 public class File
@@ -264,7 +264,7 @@ Now the `PdfFile` class can act as a `File` base class without problems. We are 
 
 > "Keep interfaces small so that users don’t end up depending on things they don’t need."
 
-This one is very straight forward, looking at this code you should already see the principle violation:
+This one is very straight forward. Looking at this code, you should already see the principle violation:
 
 ```csharp
 public interface IRepository
@@ -319,9 +319,9 @@ public class CityRepository : IRepository
 }
 ```
 
-The class `CityRepository` doesn't have Save and Update operations, it has a fixed list of cities that don't change. So our contract with the `IRepository` interface is violating the principle, because the `CityRepository` doesn't need those two extra methods, and this can lead to unexpected bugs.
+The class `CityRepository` doesn't have Save and Update operations, it has a fixed list of cities that don't change. So our contract with the `IRepository` interface violates the principle because the `CityRepository` doesn't need those two different methods, which can lead to unexpected bugs.
 
-We can break our interface in two different interfaces:
+We can break our interface into two different interfaces:
 
 ```csharp
 public interface IReadRepository
@@ -372,7 +372,7 @@ public class CityRepository : IReadRepository
 }
 ```
 
-Now our `CityRepository` only has the `List` method, and our code is respecting the principle.
+Now our `CityRepository` only has the `List` method, and our code respects the principle.
 
 ## Dependency Inversion Principle
 
@@ -421,9 +421,9 @@ public class TransactionRepository
 }
 ```
 
-Our class `TransactionService` uses the implementation of two classes, a repository and a validator. If at some point we make changes in those dependencies, our `TransactionService` would need a change too, so we are violating the Dependency Inversion Principle.
+Our class `TransactionService` uses the implementation of two classes, a repository, and a validator. If, at some point, we make changes in those dependencies, our `TransactionService` would need a change too, so we are violating the Dependency Inversion Principle.
 
-To respect the principle, we can use dependency injection and interfaces to abstract the behavior that our service class needs: 
+To respect the principle, we can use dependency injection and interfaces to abstract the behavior that our service class needs:
 
 ```csharp
 public class TransactionService
@@ -482,7 +482,7 @@ public interface ITransactionRepository
 }
 ```
 
-Now our `TransactionService` only depends on interfaces and it only knows the contract of those dependencies.
+Now our `TransactionService` only depends on interfaces and only knows the contract of those dependencies.
 
 ## Resources
 
