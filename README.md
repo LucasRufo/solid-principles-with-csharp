@@ -140,7 +140,7 @@ public class Payment
 }
 ```
 
-If, at some point, our financial department says that we need to accept a new payment type, we would have to modify the Process method and add one more condition. So our class is open to modifications in this state and violates the first SOLID principle because our `Process` method has more than one responsibility.
+If, at some point, our financial department says that we need to accept a new payment type, we would have to modify the `Process` method and add one more condition. So our class is open to modifications in this state and violates the first SOLID principle because our `Process` method has more than one responsibility.
 
 We can refactor this code to something like this: 
 
